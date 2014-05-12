@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>profiles.models &mdash; Jumpstart 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Jumpstart 1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../../index.html">Jumpstart 1.0 documentation</a></div>
+        <div class="rel">
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for profiles.models</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">The **profiles.models.py** file includes the models -- the definitive source of information about your data -- included in the project.</span>
+
+<span class="sd">.. NOTE::</span>
+<span class="sd">   In this set of codes, each attribute of the model represents a specific field in the database.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.core.validators</span> <span class="kn">import</span> <span class="n">validate_slug</span>
+
+<span class="kn">from</span> <span class="nn">profiles.validators</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_alphanumeric</span><span class="p">,</span>
+    <span class="n">validate_exclude_space</span><span class="p">,</span>
+    <span class="n">validate_not_spaces</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Settings"><a class="viewcode-back" href="../../profiles.html#profiles.models.Settings">[docs]</a><span class="k">class</span> <span class="nc">Settings</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+
+    <span class="sd">&quot;&quot;&quot;Provides attributes for the user information and other settings specifications</span>
+
+<span class="sd">    **Attributes:**</span>
+
+<span class="sd">    #. Foreign Keys:</span>
+
+<span class="sd">        * user: ``user = models.ForeignKey(User)``</span>
+<span class="sd">            Taken from *django.contrib.auth.models*, *user* signifies that the settings provided are applicable to this certain user.</span>
+
+<span class="sd">    #. Project Repository (Bitbucket) Access and Authentication:</span>
+
+<span class="sd">        * repository_username: ``repository_username = *models.CharField(max_length=200, null=True, verbose_name=&quot;Bitbucket Account&quot;, validators=[validate_not_spaces, validate_exclude_space])*``</span>
+<span class="sd">            Signifies the username for the Bitbucket account where the project will initially be pushed</span>
+<span class="sd">        * repository_consumer_key: ``repository_consumer_key = *models.CharField(max_length=200, null=True, verbose_name=&quot;Consumer Key&quot;, validators=[validate_not_spaces, validate_alphanumeric])*``</span>
+<span class="sd">            The BitBucket consumer key that the BitBucket API use to identify the user</span>
+<span class="sd">        * repository_oauth_access_token: ``repository_oauth_access_token = models.CharField(max_length=200, null=True, blank = True, verbose_name=&quot;OAuth Access Token&quot;, validators=[validate_not_spaces, validate_alphanumeric])``</span>
+<span class="sd">            With this access token, the project can make Bitbucket API calls</span>
+<span class="sd">        * repository_oauth_access_token_secret: ``repository_oauth_access_token_secret = models.CharField(max_length=200, null=True, blank = True, verbose_name=&quot;OAuth Token Secret&quot;, validators=[validate_not_spaces, validate_alphanumeric])``</span>
+<span class="sd">            Used to verify the repository_oauth_access_token</span>
+<span class="sd">        * ssh_host_alias: ``ssh_host_alias = models.CharField(max_length=200, null=True, blank = True, verbose_name=&quot;SSH Host Alias&quot;, validators=[validate_not_spaces, validate_exclude_space])``</span>
+<span class="sd">            The alias name for the SSH host to be used for pushing the project with Bitbucket</span>
+<span class="sd">        * test_repository_slug: ``test_repository_slug = models.CharField(max_length=200, null=True, verbose_name=&quot;Test Repository Slug&quot;, validators=[validate_not_spaces, validate_slug])``</span>
+<span class="sd">            The slug which will be used to identify the project in the Bitbucket URL, once it is pushed.</span>
+<span class="sd">        * projects_working_directory: ``projects_working_directory = models.CharField(max_length=200, null=True, verbose_name=&quot;Projects Working Directory&quot;, help_text=HELP_TEXT_HOME, validators=[validate_not_spaces])``</span>
+<span class="sd">            The local directory by which the project will be used</span>
+<span class="sd">        * default_project_folder_name: ``default_project_folder_name = models.CharField(max_length=200, null=True, verbose_name=&quot;Default Project Folder Name (to be replaced)&quot;, validators=[validate_not_spaces, validate_exclude_space])``</span>
+<span class="sd">            The default name of the project folder</span>
+
+<span class="sd">    #. Jira Project Management:</span>
+
+<span class="sd">        * jira_key: ``jira_key = models.TextField(null=True, blank = True, verbose_name=&quot;Jira Key&quot;, validators=[validate_not_spaces, validate_alphanumeric])``</span>
+<span class="sd">            The specific project key to be used by JIRA to identify the project space</span>
+
+<span class="sd">    #. Redmine Project Management:</span>
+
+<span class="sd">        * redmine_key: ``redmine_key = models.CharField(max_length=200, null=True, blank = True, verbose_name=&quot;API Access Key&quot;, validators=[validate_not_spaces, validate_alphanumeric])``</span>
+<span class="sd">            The specific project key to be used by Redmine to identify the project space</span>
+<span class="sd">        * redmine_url: ``redmine_url = models.URLField(null=True, blank = True, verbose_name=&quot;Redmine Environment URL&quot;, validators=[validate_not_spaces])``</span>
+<span class="sd">            The URL of the Redmine account of the user, where the project space will be created</span>
+
+<span class="sd">    **Constants:**</span>
+
+<span class="sd">        * HELP_TEXT_HOME: ``HELP_TEXT_HOME = &quot;This is a directory under $HOME (/home/username/)&quot;``</span>
+<span class="sd">            Default string message, indicating the Home directory</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Constants</span>
+    <span class="n">HELP_TEXT_HOME</span> <span class="o">=</span> <span class="s">&quot;This is a directory under $HOME (/home/username/)&quot;</span>
+
+    <span class="c"># Below settings applicable to this user</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+    
+    <span class="c"># Project repository (Bitbucket) Access and Authentication</span>
+    <span class="n">repository_username</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Bitbucket Account&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_exclude_space</span><span class="p">])</span>
+    <span class="n">repository_consumer_key</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Consumer Key&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_alphanumeric</span><span class="p">])</span>
+    <span class="n">repository_consumer_secret</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Consumer Secret&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_alphanumeric</span><span class="p">])</span>
+    <span class="n">repository_oauth_access_token</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;OAuth Access Token&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_alphanumeric</span><span class="p">])</span>
+    <span class="n">repository_oauth_access_token_secret</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;OAuth Token Secret&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_alphanumeric</span><span class="p">])</span>
+    <span class="n">ssh_host_alias</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;SSH Host Alias&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_exclude_space</span><span class="p">])</span>
+    <span class="n">test_repository_slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Test Repository Slug&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_slug</span><span class="p">])</span>
+    <span class="n">projects_working_directory</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Projects Working Directory&quot;</span><span class="p">,</span> <span class="n">help_text</span><span class="o">=</span><span class="n">HELP_TEXT_HOME</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">])</span>
+    <span class="n">default_project_folder_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Default Project Folder Name (to be replaced)&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_exclude_space</span><span class="p">])</span>
+    
+    <span class="c"># Jira Project Management</span>
+    <span class="n">jira_key</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Jira Key&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_alphanumeric</span><span class="p">])</span>
+    
+    <span class="c"># Redmine Project Management</span>
+    <span class="n">redmine_key</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;API Access Key&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_alphanumeric</span><span class="p">])</span>
+    <span class="n">redmine_url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Redmine Environment URL&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">])</span>
+    
+    <span class="c"># Test Site Deployment    </span>
+    <span class="n">domain_host</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Domain Host&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">])</span>
+    <span class="n">domain_user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Domain User&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">,</span> <span class="n">validate_exclude_space</span><span class="p">])</span>
+    <span class="n">domain_path</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&quot;Domain Project Root&quot;</span><span class="p">,</span> <span class="n">help_text</span><span class="o">=</span><span class="n">HELP_TEXT_HOME</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_not_spaces</span><span class="p">])</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../../genindex.html" title="General Index"
+             >index</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2014, Ingenuity.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
